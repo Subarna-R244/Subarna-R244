@@ -59,8 +59,8 @@ INSERT INTO movies (title, genre, duration, rating) VALUES
 
 -- Insert some sample theaters
 INSERT INTO theaters (name, location) VALUES 
-('Cinema City', 'Downtown'),
-('Movie World', 'Uptown');
+('The Majestic Theatre', 'Broadway (New York City) '),
+('The Pantages Theatre', 'Los Angeles');
 
 -- Insert some sample shows
 INSERT INTO shows (movie_id, theater_id, show_time, seats_available) VALUES 
@@ -70,16 +70,16 @@ INSERT INTO shows (movie_id, theater_id, show_time, seats_available) VALUES
 
 -- Insert sample users
 INSERT INTO users (username, password, email) VALUES
-('john_doe', 'password123', 'john.doe@example.com'),
-('jane_smith', 'mypassword456', 'jane.smith@example.com'),
-('alice_johnson', 'alicepass789', 'alice.johnson@example.com');
+('priyanka', 'priya123', 'priyanka@gmail.com'),
+('williams', 'willi909', 'williams@yahoo.com'),
+('varun', '1967varun', 'varun@yahoo.com');
 
 -- Insert sample bookings
 INSERT INTO bookings (user_id, show_id, number_of_tickets, booking_time, payment_status) VALUES
-(1, 1, 2, '2024-11-20 14:25:00', 'Paid'),  -- John Doe books 2 tickets for Avengers: Endgame
-(2, 2, 1, '2024-11-21 17:10:00', 'Pending'),  -- Jane Smith books 1 ticket for The Lion King
-(3, 3, 4, '2024-11-22 12:50:00', 'Paid'),  -- Alice Johnson books 4 tickets for Inception
-(1, 3, 3, '2024-11-23 18:00:00', 'Pending');  -- John Doe books 3 tickets for Inception
+(1, 1, 2, '2024-11-20 14:25:00', 'Paid'),  -- priyanka books 2 tickets for Avengers: Endgame
+(2, 2, 1, '2024-11-21 17:10:00', 'Pending'),  -- williams books 1 ticket for The Lion King
+(3, 3, 4, '2024-11-22 12:50:00', 'Paid'),  -- varun books 4 tickets for Inception
+(1, 3, 3, '2024-11-23 18:00:00', 'Pending');  -- priyanka books 3 tickets for Inception
 
 
 SELECT * FROM users;
