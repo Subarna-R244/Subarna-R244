@@ -43,10 +43,11 @@ def get_shows(movie_id):
 def login_user(username, password):
     connection = connect_to_db()
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
+    cursor.execute("SELECT user_id, username, password, email FROM users WHERE username = %s AND password = %s", (username, password))
     user = cursor.fetchone()
     connection.close()
-    return user
+    return user  # Now returns user_id, username, password, email
+
 
 
 # Booking tickets
@@ -94,9 +95,21 @@ class MovieTicketBookingApp:
     def login(self):
         user = login_user(self.username.get(), self.password.get())
         if user:
-            self.show_movies(user[0])  # Pass user_id to show movies
+            # Show current user details after successful login
+            self.user_id = user[0]  # Store the user_id for further use
+            self.current_user_details(user)  # Display username, password, and email
+            self.show_movies(self.user_id)  # Pass user_id to show movies
         else:
             messagebox.showerror("Login Failed", "Invalid username or password.")
+
+    def current_user_details(self, user):
+        # Extracting details from the user tuple (user_id, username, password, email)
+        user_id, username, password, email = user
+
+        # Display the current user's details
+        tk.Label(self.root, text=f"Logged in as: {username}").pack(pady=10)
+        tk.Label(self.root, text=f"Password: {password}").pack(pady=10)
+        tk.Label(self.root, text=f"Email: {email}").pack(pady=10)
 
     def show_movies(self, user_id):
         for widget in self.login_frame.winfo_children():
