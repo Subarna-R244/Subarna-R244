@@ -49,6 +49,21 @@ def login_user(username, password):
     return user  # Now returns user_id, username, password, email
 
 
+# Register a new user
+def register_user(username, password, email):
+    connection = connect_to_db()
+    cursor = connection.cursor()
+    cursor.execute("SELECT username FROM users WHERE username = %s", (username,))
+    existing_user = cursor.fetchone()
+
+    if existing_user:
+        messagebox.showerror("Registration Failed", "Username already exists.")
+    else:
+        cursor.execute("INSERT INTO users (username, password, email) VALUES (%s, %s, %s)", (username, password, email))
+        connection.commit()
+        messagebox.showinfo("Registration Success", "User registered successfully!")
+    connection.close()
+
 
 # Booking tickets
 def book_ticket(user_id, show_id, number_of_tickets):
@@ -79,34 +94,69 @@ class MovieTicketBookingApp:
 
         self.username = tk.StringVar()
         self.password = tk.StringVar()
+        self.email = tk.StringVar()
 
-        # Login frame
+        # Create frames for login and registration
         self.login_frame = tk.Frame(self.root)
         self.login_frame.pack(pady=20)
 
+        # Login form elements
         tk.Label(self.login_frame, text="Username:").grid(row=0, column=0)
-        tk.Entry(self.login_frame, textvariable=self.username).grid(row=0, column=1)
+        self.username_entry = tk.Entry(self.login_frame, textvariable=self.username)
+        self.username_entry.grid(row=0, column=1)
 
         tk.Label(self.login_frame, text="Password:").grid(row=1, column=0)
-        tk.Entry(self.login_frame, textvariable=self.password, show="*").grid(row=1, column=1)
+        self.password_entry = tk.Entry(self.login_frame, textvariable=self.password, show="*")
+        self.password_entry.grid(row=1, column=1)
 
         tk.Button(self.login_frame, text="Login", command=self.login).grid(row=2, column=0, columnspan=2)
+        tk.Button(self.login_frame, text="Register", command=self.show_register_frame).grid(row=3, column=0, columnspan=2)
+
+        self.register_frame = None
 
     def login(self):
         user = login_user(self.username.get(), self.password.get())
         if user:
-            # Show current user details after successful login
             self.user_id = user[0]  # Store the user_id for further use
             self.current_user_details(user)  # Display username, password, and email
             self.show_movies(self.user_id)  # Pass user_id to show movies
         else:
             messagebox.showerror("Login Failed", "Invalid username or password.")
 
+    def show_register_frame(self):
+        # Hide login frame
+        self.login_frame.pack_forget()
+
+        # Create registration form
+        self.register_frame = tk.Frame(self.root)
+        self.register_frame.pack(pady=20)
+
+        tk.Label(self.register_frame, text="Username:").grid(row=0, column=0)
+        tk.Entry(self.register_frame, textvariable=self.username).grid(row=0, column=1)
+
+        tk.Label(self.register_frame, text="Password:").grid(row=1, column=0)
+        tk.Entry(self.register_frame, textvariable=self.password, show="*").grid(row=1, column=1)
+
+        tk.Label(self.register_frame, text="Email:").grid(row=2, column=0)
+        tk.Entry(self.register_frame, textvariable=self.email).grid(row=2, column=1)
+
+        tk.Button(self.register_frame, text="Register", command=self.register).grid(row=3, column=0, columnspan=2)
+
+    def register(self):
+        username = self.username.get()
+        password = self.password.get()
+        email = self.email.get()
+
+        if username and password and email:
+            register_user(username, password, email)
+            self.register_frame.pack_forget()
+            self.login_frame.pack(pady=20)  # Go back to the login screen
+        else:
+            messagebox.showerror("Registration Failed", "All fields must be filled!")
+
     def current_user_details(self, user):
-        # Extracting details from the user tuple (user_id, username, password, email)
         user_id, username, password, email = user
 
-        # Display the current user's details
         tk.Label(self.root, text=f"Logged in as: {username}").pack(pady=10)
         tk.Label(self.root, text=f"Password: {password}").pack(pady=10)
         tk.Label(self.root, text=f"Email: {email}").pack(pady=10)
